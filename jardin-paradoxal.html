@@ -1,0 +1,1660 @@
+<title>Jardin Paradoxal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ---------------------------------------------------------------- tokens */
+:root{
+  --bg:#101519; --bg2:#161d22; --bg3:#1d262c;
+  --line:#2a343b; --line2:#3a464f;
+  --text:#e7edf0; --muted:#93a2ab; --faint:#6c7c86;
+  --accent:#d8593f; --accent-soft:#3a2119;
+  --jade:#5fa389; --jade-soft:#16302a;
+  --gold:#c9a227;
+  --floor:#39454e; --floor2:#2f3a42; --hole:#0b0f12; --rock:#4e5c66;
+  --wukin:#0d1114; --wukin-ring:#7d8d97;
+  --wukang:#eee9dd; --wukang-ring:#7a6f5c;
+  --shadow:0 1px 0 rgba(255,255,255,.04), 0 10px 30px -18px rgba(0,0,0,.9);
+  --r:10px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#e9e6df; --bg2:#f5f3ee; --bg3:#eceae3;
+    --line:#d2cdc2; --line2:#bdb6a8;
+    --text:#1b2227; --muted:#606c76; --faint:#8b949c;
+    --accent:#bd472c; --accent-soft:#f6e3dd;
+    --jade:#3d7a63; --jade-soft:#e0eee8;
+    --gold:#9a7d12;
+    --floor:#cfc9ba; --floor2:#c2bbaa; --hole:#6d6a63; --rock:#a09786;
+    --wukin:#1a1f23; --wukin-ring:#5c6870;
+    --wukang:#fbf8f1; --wukang-ring:#a2957f;
+    --shadow:0 1px 0 rgba(255,255,255,.7), 0 10px 26px -20px rgba(40,34,24,.6);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#e9e6df; --bg2:#f5f3ee; --bg3:#eceae3;
+  --line:#d2cdc2; --line2:#bdb6a8;
+  --text:#1b2227; --muted:#606c76; --faint:#8b949c;
+  --accent:#bd472c; --accent-soft:#f6e3dd;
+  --jade:#3d7a63; --jade-soft:#e0eee8;
+  --gold:#9a7d12;
+  --floor:#cfc9ba; --floor2:#c2bbaa; --hole:#6d6a63; --rock:#a09786;
+  --wukin:#1a1f23; --wukin-ring:#5c6870;
+  --wukang:#fbf8f1; --wukang-ring:#a2957f;
+  --shadow:0 1px 0 rgba(255,255,255,.7), 0 10px 26px -20px rgba(40,34,24,.6);
+  color-scheme:light;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font:400 15px/1.55 "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Shippori Mincho", Georgia, serif; font-weight:700; text-wrap:balance; margin:0}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+
+.wrap{max-width:1320px; margin:0 auto; padding-inline:18px; padding-block:22px 60px}
+
+/* ------------------------------------------------------------------ head */
+header.top{display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px 22px; margin-bottom:20px}
+.brand{display:flex; align-items:center; gap:13px}
+.yy{width:38px;height:38px;flex:none}
+.brand h1{font-size:26px; letter-spacing:.01em; line-height:1.1}
+.brand p{margin:2px 0 0; color:var(--muted); font-size:13px}
+.top .spacer{flex:1}
+.themeBtn{background:none;border:1px solid var(--line);border-radius:99px;padding:6px 13px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.themeBtn:hover{border-color:var(--line2); color:var(--text)}
+
+/* ------------------------------------------------------------------ grid */
+.cols{display:grid; grid-template-columns:minmax(0,1fr) 372px; gap:20px; align-items:start}
+@media (max-width:980px){ .cols{grid-template-columns:minmax(0,1fr)} }
+
+.panel{background:var(--bg2); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+.panel > .hd{display:flex; align-items:center; gap:10px; padding:12px 15px; border-bottom:1px solid var(--line)}
+.panel > .hd h2{font-size:15px; letter-spacing:.02em}
+.panel > .bd{padding:15px}
+.eyebrow{font:500 10.5px/1 "IBM Plex Mono",monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--faint)}
+
+/* ----------------------------------------------------------------- board */
+.boardWrap{position:relative; background:var(--bg3); border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+canvas#board{display:block; width:100%; height:auto; touch-action:manipulation; cursor:crosshair}
+.boardBar{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--line); background:var(--bg2)}
+.chip{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); border-radius:99px;
+      padding:5px 11px; font:500 12.5px/1 "IBM Plex Mono",monospace; color:var(--muted); background:var(--bg3)}
+.chip b{color:var(--text); font-weight:500}
+.dot{width:11px;height:11px;border-radius:99px;flex:none}
+.dot.n{background:var(--wukin); border:1.5px solid var(--wukin-ring)}
+.dot.b{background:var(--wukang); border:1.5px solid var(--wukang-ring)}
+
+/* --------------------------------------------------------------- buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+     border:1px solid var(--line2); background:var(--bg3); color:var(--text);
+     padding:8px 13px; border-radius:8px; cursor:pointer; font-size:13.5px; line-height:1.2}
+.btn:hover{border-color:var(--accent); color:var(--text)}
+.btn[disabled]{opacity:.45; cursor:not-allowed; border-color:var(--line)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:500}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:none; border-color:var(--line)}
+.btn.sm{padding:5px 9px; font-size:12.5px}
+.btn.on{border-color:var(--accent); background:var(--accent-soft); color:var(--text)}
+.row{display:flex; flex-wrap:wrap; gap:8px}
+
+/* ---------------------------------------------------------------- import */
+.drop{border:1.5px dashed var(--line2); border-radius:var(--r); padding:18px 14px; text-align:center;
+      background:var(--bg3); cursor:pointer; transition:border-color .15s, background .15s}
+.drop:hover,.drop.over{border-color:var(--accent); background:var(--accent-soft)}
+.drop strong{display:block; font-size:14px; margin-bottom:3px}
+.drop span{color:var(--muted); font-size:12.5px}
+.note{color:var(--muted); font-size:12.5px; margin:10px 0 0}
+.note code{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--text)}
+.msg{margin-top:11px; padding:9px 11px; border-radius:8px; font-size:13px; border:1px solid var(--line)}
+.msg.ok{border-color:var(--jade); background:var(--jade-soft)}
+.msg.warn{border-color:var(--gold); background:color-mix(in srgb, var(--gold) 14%, transparent)}
+.msg.err{border-color:var(--accent); background:var(--accent-soft)}
+
+/* ----------------------------------------------------------------- tools */
+.tools{display:grid; grid-template-columns:repeat(3,1fr); gap:7px}
+.tool{display:flex; flex-direction:column; align-items:center; gap:5px; padding:9px 4px;
+      border:1px solid var(--line); border-radius:8px; background:var(--bg3); cursor:pointer; font-size:11.5px; color:var(--muted)}
+.tool:hover{border-color:var(--line2)}
+.tool.on{border-color:var(--accent); background:var(--accent-soft); color:var(--text)}
+.tool i{width:17px;height:17px;border-radius:99px;display:block}
+.nudge{display:grid; grid-template-columns:repeat(4,34px); gap:6px}
+
+/* ------------------------------------------------------------------ plan */
+.summary{display:flex; flex-wrap:wrap; gap:8px 20px; align-items:baseline; margin-bottom:12px}
+.summary .big{font-family:"Shippori Mincho",Georgia,serif; font-size:22px}
+.stat{font:500 12.5px/1 "IBM Plex Mono",monospace; color:var(--muted)}
+.stat b{color:var(--text); font-weight:500}
+
+.stepCard{border:1px solid var(--line2); border-left:3px solid var(--accent); border-radius:8px;
+          padding:13px 14px; background:var(--bg3)}
+.stepCard .k{display:flex; align-items:center; gap:9px; margin-bottom:7px}
+.stepCard .num{font:500 12px/1 "IBM Plex Mono",monospace; color:var(--faint)}
+.stepCard .spell{font-family:"Shippori Mincho",Georgia,serif; font-size:17px}
+.stepCard p{margin:0; font-size:14px}
+.stepCard .sub{margin-top:7px; color:var(--muted); font-size:12.5px}
+.kbd{font:500 11px/1 "IBM Plex Mono",monospace; border:1px solid var(--line2); border-radius:4px; padding:2px 5px; color:var(--muted)}
+
+ol.steps{list-style:none; margin:12px 0 0; padding:0; max-height:340px; overflow:auto; border-top:1px solid var(--line)}
+ol.steps li{display:flex; gap:10px; align-items:baseline; padding:7px 4px; border-bottom:1px solid var(--line);
+            cursor:pointer; font-size:13px}
+ol.steps li:hover{background:var(--bg3)}
+ol.steps li.cur{background:var(--accent-soft)}
+ol.steps li .i{font:500 11.5px/1.4 "IBM Plex Mono",monospace; color:var(--faint); min-width:22px; text-align:right; font-variant-numeric:tabular-nums}
+ol.steps li.turn{background:none; cursor:default; color:var(--faint); font-family:"IBM Plex Mono",monospace; font-size:11px;
+                 letter-spacing:.14em; text-transform:uppercase; padding-top:11px}
+ol.steps li.turn:hover{background:none}
+
+details.rules{margin-top:16px; border:1px solid var(--line); border-radius:var(--r); background:var(--bg2)}
+details.rules summary{cursor:pointer; padding:11px 15px; font-family:"Shippori Mincho",Georgia,serif; font-size:15px}
+details.rules .bd{padding:0 15px 14px; font-size:13.5px; color:var(--muted)}
+details.rules .bd p{margin:.5em 0}
+details.rules b{color:var(--text); font-weight:600}
+
+footer{margin-top:26px; color:var(--faint); font-size:12px}
+footer a{color:var(--muted)}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} }
+</style>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <svg class="yy" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="47" fill="var(--wukang)" stroke="var(--line2)" stroke-width="2"/>
+        <path d="M50 3a47 47 0 0 0 0 94 23.5 23.5 0 0 1 0-47 23.5 23.5 0 0 0 0-47Z" fill="var(--wukin)"/>
+        <circle cx="50" cy="26.5" r="7" fill="var(--wukang)"/>
+        <circle cx="50" cy="73.5" r="7" fill="var(--wukin)"/>
+      </svg>
+      <div>
+        <h1>Jardin Paradoxal</h1>
+        <p>Solveur du combat final — <em>En ce jardin qui nous unit</em></p>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <button class="themeBtn" id="theme" type="button">Thème clair / sombre</button>
+  </header>
+
+  <div class="cols">
+    <!-- =============================================================== board -->
+    <div>
+      <div class="boardWrap">
+        <canvas id="board" width="1160" height="600"></canvas>
+        <div class="boardBar">
+          <span class="chip"><span class="dot n"></span>Wukin <b id="cntN">0</b></span>
+          <span class="chip"><span class="dot b"></span>Wukang <b id="cntB">0</b></span>
+          <span class="chip" id="chipPlayer">Personnage <b>—</b></span>
+          <span style="flex:1"></span>
+          <button class="btn sm ghost" id="bgToggle" type="button" disabled>Fond : schéma</button>
+          <button class="btn sm ghost" id="clearBoard" type="button">Vider</button>
+        </div>
+      </div>
+
+      <div id="planZone" hidden>
+        <div class="panel" style="margin-top:16px">
+          <div class="hd"><span class="eyebrow">Solution</span><h2 id="planTitle">—</h2></div>
+          <div class="bd">
+            <div class="summary" id="planSummary"></div>
+            <div class="stepCard" id="stepCard"></div>
+            <div class="row" style="margin-top:12px">
+              <button class="btn" id="prev" type="button">← Précédent</button>
+              <button class="btn primary" id="next" type="button">Suivant →</button>
+              <span style="flex:1"></span>
+              <button class="btn ghost sm" id="copyPlan" type="button">Copier le plan</button>
+            </div>
+            <ol class="steps" id="stepList"></ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============================================================== panel -->
+    <div>
+      <section class="panel">
+        <div class="hd"><span class="eyebrow">Étape 1</span><h2>Importer la capture</h2></div>
+        <div class="bd">
+          <div class="drop" id="drop" tabindex="0" role="button" aria-label="Importer une capture d'écran">
+            <strong>Dépose ta capture ici</strong>
+            <span>ou clique — <span class="kbd">Ctrl</span>+<span class="kbd">V</span> fonctionne aussi</span>
+          </div>
+          <input type="file" id="file" accept="image/*" hidden>
+          <p class="note">Capture prise <b>pendant la phase de placement</b> ou au début de ton tour, sans fenêtre par-dessus le terrain. Les cases oranges des souffles servent de repère.</p>
+          <div id="detectMsg"></div>
+          <div class="row" id="nudgeRow" style="margin-top:11px" hidden>
+            <span class="stat" style="width:100%">Grille décalée&nbsp;? Recale-la :</span>
+            <div class="nudge">
+              <button class="btn sm ghost" data-nudge="-1,0" type="button" title="vers le haut-gauche">↖</button>
+              <button class="btn sm ghost" data-nudge="0,-1" type="button" title="vers le haut-droite">↗</button>
+              <button class="btn sm ghost" data-nudge="0,1" type="button" title="vers le bas-gauche">↙</button>
+              <button class="btn sm ghost" data-nudge="1,0" type="button" title="vers le bas-droite">↘</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top:16px">
+        <div class="hd"><span class="eyebrow">Étape 2</span><h2>Vérifier / corriger</h2></div>
+        <div class="bd">
+          <div class="tools" id="tools">
+            <button class="tool on" data-tool="noir" type="button"><i style="background:var(--wukin);border:1.5px solid var(--wukin-ring)"></i>Wukin</button>
+            <button class="tool" data-tool="blanc" type="button"><i style="background:var(--wukang);border:1.5px solid var(--wukang-ring)"></i>Wukang</button>
+            <button class="tool" data-tool="player" type="button"><i style="background:var(--accent)"></i>Personnage</button>
+            <button class="tool" data-tool="erase" type="button"><i style="background:var(--bg);border:1.5px solid var(--line2)"></i>Effacer</button>
+            <button class="tool" data-tool="hole" type="button"><i style="background:var(--hole);border:1.5px solid var(--line2)"></i>Trou</button>
+            <button class="tool" data-tool="rock" type="button"><i style="background:var(--rock)"></i>Rocher</button>
+          </div>
+          <p class="note">Clique une case du plateau pour y appliquer l’outil. Les trous laissent passer la ligne de vue, les rochers la bloquent.</p>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top:16px">
+        <div class="hd"><span class="eyebrow">Étape 3</span><h2>Résoudre</h2></div>
+        <div class="bd">
+          <div class="row">
+            <button class="btn primary" id="solve" type="button" style="flex:1">Calculer la solution</button>
+          </div>
+          <div class="row" style="margin-top:9px">
+            <label class="chip" style="cursor:pointer"><input type="checkbox" id="optColor" style="accent-color:var(--accent)"> couleur imposée</label>
+            <select id="colorSel" class="btn sm ghost" style="padding:6px 8px" disabled>
+              <option value="0">tout Wukin (noir)</option>
+              <option value="1">tout Wukang (blanc)</option>
+            </select>
+          </div>
+          <div id="solveMsg"></div>
+        </div>
+      </section>
+
+      <details class="rules">
+        <summary>Rappel des règles du combat</summary>
+        <div class="bd">
+          <p><b>Vibration Paradoxale</b> — 1 PA, −1 PV, 10 lancers/tour. Uniquement <b>en ligne</b>, portée infinie, ligne de vue requise. Un souffle <b>noir</b> est poussé de 1 case, un souffle <b>blanc</b> est attiré de 1 case. La cible change de couleur, <b>et tous les souffles en ligne de la case d’arrivée aussi</b>.</p>
+          <p><b>Réciprocité</b> — 2 PA, −3 PV, 1 lancer/tour, relance 2 tours, portée 2 à 5 sans ligne de vue. Tu échanges de place avec la cible ; la case d’arrivée est <b>ton ancienne case</b>.</p>
+          <p><b>Toi</b> — 50 PV, 10 PA, 1 PM, −1 PV à chaque début de tour. Le but : <b>tous les souffles de la même couleur</b>.</p>
+          <p>Le solveur suppose que la propagation « en ligne » traverse toute la carte sans être arrêtée par les autres souffles, conformément à l’énoncé du sort.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <footer>
+    Règles d’après le guide <a href="https://www.dofuspourlesnoobs.com/en-ce-jardin-qui-nous-unit.html" target="_blank" rel="noopener">Dofus pour les Noobs</a>.
+    DOFUS est un jeu édité par Ankama ; cet outil n’est pas affilié.
+  </footer>
+</div>
+
+<script>
+/* ============================================================================
+   Solveur du combat final de "En ce jardin qui nous unit" (DOFUS)
+
+   Regles modelisees (source : dofuspourlesnoobs.com)
+   - 50 PV, 10 PA, 1 PM. -1 PV a chaque debut de tour.
+   - Vibration Paradoxale : 1 PA, -1 PV, 10 lancers/tour, uniquement en ligne,
+     portee infinie, ligne de vue requise.
+       * cible NOIRE (Wukin)  -> poussee de 1 case (s'eloigne du lanceur)
+       * cible BLANCHE (Wukang) -> attiree de 1 case (se rapproche)
+       * la cible change de couleur, ET tous les souffles en ligne de la
+         CASE D'ARRIVEE changent aussi de couleur.
+   - Reciprocite : 2 PA, -3 PV, 1 lancer/tour, relance 2 tours, portee 2-5,
+     sans ligne de vue. Echange de place avec la cible ; la cible change de
+     couleur et tous les souffles en ligne de la case d'arrivee (= l'ancienne
+     case du joueur) changent aussi de couleur.
+   - Objectif : tous les souffles de la meme couleur.
+
+   Repere : (u,v) = les deux axes "en ligne" de la grille Dofus.
+   Ecran  : x = OX + (u-v)*HW ; y = OY + (u+v)*HH  avec HH = HW/2.
+   ============================================================================ */
+(function (root) {
+  'use strict';
+
+  /* ---------------------------------------------------------------- carte */
+  const U_MIN = -4, U_MAX = 12, V_MIN = -4, V_MAX = 13;
+  const D_MIN = -14, D_MAX = 13;               // bornes sur (u - v)
+  const S_MIN = -8, S_MAX = 22;                // bornes sur (u + v)
+
+  // Trous : infranchissables, mais la ligne de vue passe.
+  const DEFAULT_HOLES = ['4,2', '5,2', '6,2', '12,4'];
+  // Rochers sureleves : infranchissables ET bloquent la ligne de vue.
+  const DEFAULT_ROCKS = ['2,6', '3,6', '9,7', '10,7', '4,11', '4,12'];
+
+  const OFF = 8, SH = 6, MASK = 63;
+  const cid = (u, v) => ((u + OFF) << SH) | (v + OFF);
+  const cu = id => (id >> SH) - OFF;
+  const cv = id => (id & MASK) - OFF;
+  const key = (u, v) => u + ',' + v;
+  const parse = k => k.split(',').map(Number);
+
+  const NOIR = 0;    // Souffle du Wukin
+  const BLANC = 1;   // Souffle du Wukang
+
+  const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  // Orientation ecran des 4 directions "en ligne"
+  const DIR_INFO = {
+    '1,0':  { label: 'bas-droite',  arrow: '↘' },
+    '-1,0': { label: 'haut-gauche', arrow: '↖' },
+    '0,1':  { label: 'bas-gauche',  arrow: '↙' },
+    '0,-1': { label: 'haut-droite', arrow: '↗' }
+  };
+  const dirInfo = d => DIR_INFO[d[0] + ',' + d[1]];
+
+  function inRect(u, v) {
+    return u >= U_MIN && u <= U_MAX && v >= V_MIN && v <= V_MAX &&
+           (u - v) >= D_MIN && (u - v) <= D_MAX &&
+           (u + v) >= S_MIN && (u + v) <= S_MAX;
+  }
+
+  function makeMap(holes, rocks) {
+    const flag = new Uint8Array(1 << (SH + 5));   // 1 = sol, 2 = rocher
+    const H = new Set(holes || DEFAULT_HOLES);
+    const R = new Set(rocks || DEFAULT_ROCKS);
+    const cells = [];
+    for (let u = U_MIN; u <= U_MAX; u++)
+      for (let v = V_MIN; v <= V_MAX; v++) {
+        if (!inRect(u, v)) continue;
+        const k = key(u, v), id = cid(u, v);
+        cells.push({ u, v, id });
+        if (R.has(k)) flag[id] = 2;
+        else if (H.has(k)) flag[id] = 0;
+        else flag[id] = 1;
+      }
+    return {
+      cells, holes: H, rocks: R, flag,
+      free: id => flag[id] === 1,
+      known: id => { const u = cu(id), v = cv(id); return inRect(u, v); },
+      opaque: id => { const u = cu(id), v = cv(id); return !inRect(u, v) || flag[id] === 2; }
+    };
+  }
+
+  /* ---------------------------------------------------------------- etat */
+  /* pos : Int16Array des cases des souffles ; col : bitmask (1 = BLANC)    */
+
+  function initState(playerUV, souffles, opts) {
+    opts = opts || {};
+    const n = souffles.length;
+    const pos = new Int16Array(n);
+    let col = 0;
+    souffles.forEach((s, i) => { pos[i] = cid(s[0], s[1]); if (s[2] === BLANC) col |= (1 << i); });
+    return {
+      p: cid(playerUV[0], playerUV[1]), pos, col, n,
+      pa: opts.pa !== undefined ? opts.pa : 10,
+      pm: opts.pm !== undefined ? opts.pm : 1,
+      vp: 10, reciCd: 0, turn: 1,
+      hp: opts.hp !== undefined ? opts.hp : 49
+    };
+  }
+
+  const clone = st => ({ p: st.p, pos: st.pos.slice(), col: st.col, n: st.n,
+                         pa: st.pa, pm: st.pm, vp: st.vp, reciCd: st.reciCd,
+                         turn: st.turn, hp: st.hp });
+
+  function counts(st) {
+    let b = 0;
+    for (let i = 0; i < st.n; i++) if (st.col & (1 << i)) b++;
+    return { total: st.n, blanc: b, noir: st.n - b };
+  }
+  const wrongCount = (st, target) => target === BLANC ? st.n - counts(st).blanc : counts(st).blanc;
+  const solved = st => { const c = counts(st); return c.total === 0 || !c.blanc || !c.noir; };
+
+  function hashState(st) {
+    let s = String.fromCharCode(st.p, st.col & 0xffff, (st.col >>> 16) & 0xffff);
+    for (let i = 0; i < st.n; i++) s += String.fromCharCode(st.pos[i]);
+    return s;
+  }
+
+  function occupancy(st) {
+    const o = new Map();
+    for (let i = 0; i < st.n; i++) o.set(st.pos[i], i);
+    return o;
+  }
+
+  /* ------------------------------------------------------------- ciblage */
+  function vpTargets(st, map, occ) {
+    occ = occ || occupancy(st);
+    const out = [];
+    for (let k = 0; k < 4; k++) {
+      const d = DIRS[k];
+      let u = cu(st.p), v = cv(st.p);
+      for (let step = 1; step <= 34; step++) {
+        u += d[0]; v += d[1];
+        if (!inRect(u, v)) break;
+        const id = cid(u, v);
+        const i = occ.get(id);
+        if (i !== undefined) { out.push({ i, id, u, v, d, dist: step }); break; }
+        if (map.opaque(id)) break;
+      }
+    }
+    return out;
+  }
+
+  function reciTargets(st) {
+    const pu = cu(st.p), pv = cv(st.p), out = [];
+    for (let i = 0; i < st.n; i++) {
+      const u = cu(st.pos[i]), v = cv(st.pos[i]);
+      const dist = Math.abs(u - pu) + Math.abs(v - pv);
+      if (dist >= 2 && dist <= 5) out.push({ i, id: st.pos[i], u, v, dist });
+    }
+    return out;
+  }
+
+  /* ------------------------------------------------------------- effets */
+  function flipAround(st, nst, au, av, ti) {
+    const flipped = [];
+    for (let i = 0; i < st.n; i++) {
+      if (i === ti) continue;
+      const u = cu(st.pos[i]), v = cv(st.pos[i]);
+      if (u === au || v === av) { nst.col ^= (1 << i); flipped.push(i); }
+    }
+    return flipped;
+  }
+
+  function applyVP(st, map, t, occ) {
+    occ = occ || occupancy(st);
+    const nst = clone(st);
+    const col = (st.col >> t.i) & 1;                  // 1 = BLANC
+    const sign = col === NOIR ? 1 : -1;               // noir pousse, blanc attire
+    let du = t.u + t.d[0] * sign, dv = t.v + t.d[1] * sign;
+    let moved = true;
+    const did = cid(du, dv);
+    if (!inRect(du, dv) || !map.free(did) || occ.has(did) || did === st.p) {
+      du = t.u; dv = t.v; moved = false;
+    }
+    nst.pos[t.i] = cid(du, dv);
+    nst.col ^= (1 << t.i);
+    const flipped = flipAround(st, nst, du, dv, t.i);
+    nst.pa -= 1; nst.vp -= 1; nst.hp -= 1;
+    return { st: nst, spell: 'VP', target: t.id, from: t.id, arrival: cid(du, dv),
+             dir: t.d, moved, pushed: col === NOIR, flipped, color: col };
+  }
+
+  function applyReci(st, map, t) {
+    const nst = clone(st);
+    const col = (st.col >> t.i) & 1;
+    const au = cu(st.p), av = cv(st.p);
+    nst.pos[t.i] = st.p;
+    nst.col ^= (1 << t.i);
+    const flipped = flipAround(st, nst, au, av, t.i);
+    nst.p = t.id;
+    nst.pa -= 2; nst.hp -= 3; nst.reciCd = 2;
+    return { st: nst, spell: 'RECI', target: t.id, from: t.id, arrival: cid(au, av),
+             flipped, color: col };
+  }
+
+  function applyMove(st, d) {
+    const nst = clone(st);
+    nst.p = cid(cu(st.p) + d[0], cv(st.p) + d[1]);
+    nst.pm -= 1;
+    return { st: nst, spell: 'MOVE', dir: d, arrival: nst.p };
+  }
+
+  function endTurn(st) {
+    const nst = clone(st);
+    nst.turn += 1; nst.pa = 10; nst.pm = 1; nst.vp = 10;
+    nst.reciCd = Math.max(0, nst.reciCd - 1);
+    nst.hp -= 1;
+    return nst;
+  }
+
+  /* ------------------------------------------------------------ coups */
+  function spellActions(st, map, occ) {
+    const acts = [];
+    if (st.pa >= 1 && st.vp >= 1)
+      for (const t of vpTargets(st, map, occ)) acts.push({ type: 'VP', target: t });
+    if (st.pa >= 2 && st.reciCd === 0)
+      for (const t of reciTargets(st)) acts.push({ type: 'RECI', target: t });
+    return acts;
+  }
+
+  function moveActions(st, map, occ) {
+    occ = occ || occupancy(st);
+    const acts = [];
+    if (st.pm >= 1)
+      for (const d of DIRS) {
+        const u = cu(st.p) + d[0], v = cv(st.p) + d[1];
+        if (!inRect(u, v)) continue;
+        const id = cid(u, v);
+        if (map.free(id) && !occ.has(id)) acts.push({ type: 'MOVE', d });
+      }
+    return acts;
+  }
+
+  function applyAction(st, map, a, occ) {
+    if (a.type === 'VP') return applyVP(st, map, a.target, occ);
+    if (a.type === 'RECI') return applyReci(st, map, a.target);
+    if (a.type === 'MOVE') return applyMove(st, a.d);
+    if (a.type === 'END') return { st: endTurn(st), spell: 'END' };
+    throw new Error('action inconnue: ' + a.type);
+  }
+
+  /* ------------------------------------------------------- heuristique */
+  function maxGain(st) {
+    const byU = new Map(), byV = new Map();
+    for (let i = 0; i < st.n; i++) {
+      const u = cu(st.pos[i]), v = cv(st.pos[i]);
+      byU.set(u, (byU.get(u) || 0) + 1);
+      byV.set(v, (byV.get(v) || 0) + 1);
+    }
+    let a = 0, b = 0;
+    for (const x of byU.values()) if (x > a) a = x;
+    for (const x of byV.values()) if (x > b) b = x;
+    return a + b + 1;
+  }
+
+  /* ------------------------------------------------------------ recherche */
+  function Heap(cmp) { this.a = []; this.cmp = cmp; }
+  Heap.prototype.push = function (x) {
+    const a = this.a; a.push(x); let i = a.length - 1;
+    while (i > 0) { const p = (i - 1) >> 1;
+      if (this.cmp(a[i], a[p]) < 0) { const t = a[i]; a[i] = a[p]; a[p] = t; i = p; } else break; }
+  };
+  Heap.prototype.pop = function () {
+    const a = this.a; if (!a.length) return null;
+    const top = a[0], last = a.pop();
+    if (a.length) { a[0] = last; let i = 0;
+      for (;;) { const l = 2 * i + 1, r = l + 1; let m = i;
+        if (l < a.length && this.cmp(a[l], a[m]) < 0) m = l;
+        if (r < a.length && this.cmp(a[r], a[m]) < 0) m = r;
+        if (m === i) break; const t = a[i]; a[i] = a[m]; a[m] = t; i = m; } }
+    return top;
+  };
+  Heap.prototype.size = function () { return this.a.length; };
+
+  const popcount = x => { let c = 0; x >>>= 0; while (x) { x &= x - 1; c++; } return c; };
+
+  /* Recherche en faisceau (beam search) : rapide et tres efficace ici.
+     A chaque profondeur on garde les W meilleurs etats (moins de souffles de
+     la mauvaise couleur d'abord, puis moins de sorts depenses).            */
+  function beamSearch(start, map, targetColor, W, maxDepth, jitter, deadline) {
+    const mask = start.n >= 31 ? -1 : (1 << start.n) - 1;
+    const wrongOf = st => popcount(targetColor === BLANC ? (~st.col & mask) : (st.col & mask));
+    let frontier = [{ st: start, path: [], g: 0 }];
+    const seen = new Set([hashState(start) + '#' + start.pa + '#' + start.turn]);
+
+    for (let depth = 0; depth < maxDepth; depth++) {
+      const next = [];
+      for (const node of frontier) {
+        const st = node.st, occ = occupancy(st);
+        const spells = spellActions(st, map, occ);
+        const kids = [];
+        for (const a of spells) {
+          const r = applyAction(st, map, a, occ);
+          if (r.st.hp > 1) kids.push({ r, c: 1 });
+        }
+        for (const a of moveActions(st, map, occ)) kids.push({ r: applyAction(st, map, a, occ), c: 0.4 });
+        if (st.pa < 1 || !spells.length) {
+          const nst = endTurn(st);
+          if (nst.hp > 1) kids.push({ r: { st: nst, spell: 'END' }, c: 0.9 });
+        }
+        for (const k of kids) {
+          const nst = k.r.st;
+          const h = hashState(nst) + '#' + nst.pa + '#' + nst.turn;
+          if (seen.has(h)) continue;
+          seen.add(h);
+          const step = Object.assign({}, k.r); delete step.st;
+          next.push({ st: nst, path: node.path.concat([step]), g: node.g + k.c, w: wrongOf(nst) });
+        }
+      }
+      if (!next.length) return null;
+      for (const n of next) if (n.w === 0) return n.path;
+      for (const n of next) n.score = n.w * 1000 + n.g * 3 + (jitter ? Math.random() * jitter : 0);
+      next.sort((a, b) => a.score - b.score);
+      frontier = next.slice(0, W);
+      if (deadline && Date.now() > deadline) return null;
+    }
+    return null;
+  }
+
+  const planCost = path => ({
+    spells: path.filter(s => s.spell === 'VP' || s.spell === 'RECI').length,
+    turns: 1 + path.filter(s => s.spell === 'END').length,
+    moves: path.filter(s => s.spell === 'MOVE').length
+  });
+
+  /* --------------------------------------------------------------- API */
+  function solve(playerUV, souffles, options) {
+    const opt = Object.assign({
+      holes: null, rocks: null, budgetMs: 2200, beamWidth: 1600, maxDepth: 34,
+      forceColor: null
+    }, options || {});
+    const map = makeMap(opt.holes, opt.rocks);
+    const start = initState(playerUV, souffles, opt);
+
+    if (!start.n) return { ok: false, reason: 'Aucun souffle placé sur le plateau.' };
+    if (!map.free(start.p)) return { ok: false, reason: "Le personnage n'est pas sur une case praticable." };
+    if (solved(start)) {
+      const c = counts(start);
+      return { ok: true, steps: [], color: c.blanc ? BLANC : NOIR, turns: 1, spells: 0,
+               already: true, timeline: buildTimeline(start, [], map) };
+    }
+
+    const colors = opt.forceColor === null || opt.forceColor === undefined
+      ? [NOIR, BLANC] : [opt.forceColor];
+    const deadline = Date.now() + opt.budgetMs;
+    let best = null;
+    const consider = (path, color) => {
+      if (!path) return;
+      const c = planCost(path);
+      if (!best || c.spells < best.spells || (c.spells === best.spells && c.turns < best.turns) ||
+          (c.spells === best.spells && c.turns === best.turns && path.length < best.steps.length)) {
+        best = { steps: path, color, spells: c.spells, turns: c.turns, moves: c.moves };
+      }
+    };
+
+    // 1) passe deterministe
+    for (const col of colors) consider(beamSearch(start, map, col, opt.beamWidth, opt.maxDepth, 0, deadline), col);
+    // 2) relances aleatoires tant qu'il reste du temps
+    const widths = [500, 900, 1800, 3000];
+    let i = 0;
+    while (Date.now() < deadline - 120) {
+      const col = colors[i % colors.length];
+      const W = widths[(i / colors.length | 0) % widths.length];
+      consider(beamSearch(start, map, col, W, opt.maxDepth, 5000, deadline), col);
+      i++;
+      if (i > 60) break;
+    }
+    if (!best) return { ok: false, reason: "Aucune solution trouvée. Vérifie les couleurs, la position du personnage et les obstacles (trous / rochers)." };
+    best.ok = true;
+    best.timeline = buildTimeline(start, best.steps, map);
+    return best;
+  }
+
+  /* Rejoue le plan et renvoie, pour chaque etape, l'etat avant/apres. */
+  function buildTimeline(start, path, map) {
+    const snap = st => ({
+      player: [cu(st.p), cv(st.p)],
+      souffles: Array.from({ length: st.n }, (_, i) =>
+        ({ u: cu(st.pos[i]), v: cv(st.pos[i]), c: (st.col >> i) & 1 })),
+      pa: st.pa, pm: st.pm, hp: st.hp, turn: st.turn
+    });
+    const out = [{ before: snap(start), step: null }];
+    let st = start;
+    for (const s of path) {
+      const before = snap(st);
+      let nst;
+      if (s.spell === 'END') nst = endTurn(st);
+      else if (s.spell === 'MOVE') nst = applyMove(st, s.dir).st;
+      else if (s.spell === 'VP') {
+        const occ = occupancy(st);
+        const i = occ.get(s.from);
+        nst = applyVP(st, map, { i, id: s.from, u: cu(s.from), v: cv(s.from), d: s.dir }, occ).st;
+      } else {
+        const occ = occupancy(st);
+        const i = occ.get(s.from);
+        nst = applyReci(st, map, { i, id: s.from, u: cu(s.from), v: cv(s.from) }).st;
+      }
+      out.push({ before, after: snap(nst), step: s });
+      st = nst;
+    }
+    out[0].after = out.length > 1 ? out[1].before : snap(st);
+    return { frames: out, final: snap(st) };
+  }
+
+  const API = {
+    NOIR, BLANC, DIRS, DIR_INFO, dirInfo,
+    U_MIN, U_MAX, V_MIN, V_MAX, D_MIN, D_MAX, S_MIN, S_MAX,
+    DEFAULT_HOLES, DEFAULT_ROCKS,
+    cid, cu, cv, key, parse, inRect, makeMap,
+    initState, clone, counts, solved, hashState, occupancy,
+    vpTargets, reciTargets, spellActions, moveActions, applyAction, endTurn, beamSearch,
+    wrongCount, solve, buildTimeline
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = API;
+  else root.JardinSolver = API;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ============================================================================
+   Detection automatique de la position de depart a partir d'une capture
+   d'ecran DOFUS du combat "En ce jardin qui nous unit".
+
+   Entree : pixels RGBA (Uint8ClampedArray), largeur, hauteur.
+   Sortie : { ok, lattice:{hw,hh,ox,oy}, souffles:[{u,v,c}], player:[u,v], ... }
+
+   Principe
+   1. Les cases de placement ennemies sont entourees d'un hexagone orange :
+      on en extrait les centres -> ce sont exactement des centres de cases.
+   2. On ajuste le pas de la grille isometrique (hw, hh = hw/2) puis l'origine.
+   3. Couleur du souffle : la tete du dragon se trouve ~1,35 * hw au-dessus du
+      centre de la case ; tete tres sombre = Wukin (noir), sinon Wukang (blanc).
+   4. Le personnage est sur la case au liseré clair entourée des cases vertes
+      de placement.
+   5. On recale enfin la grille sur la carte connue de l'arene.
+   ============================================================================ */
+(function (root) {
+  'use strict';
+
+  function luminance(r, g, b) { return 0.299 * r + 0.587 * g + 0.114 * b; }
+
+  /* ---------------------------------------------------- composantes liees */
+  function components(mask, W, H, minPix) {
+    const lab = new Int32Array(W * H).fill(-1);
+    const st = new Int32Array(W * H);
+    const out = [];
+    for (let i = 0; i < W * H; i++) {
+      if (!mask[i] || lab[i] >= 0) continue;
+      let sp = 0; st[sp++] = i; lab[i] = out.length;
+      let n = 0, sx = 0, sy = 0, mnx = 1e9, mxx = -1, mny = 1e9, mxy = -1;
+      while (sp) {
+        const c = st[--sp], x = c % W, y = (c - x) / W;
+        n++; sx += x; sy += y;
+        if (x < mnx) mnx = x; if (x > mxx) mxx = x;
+        if (y < mny) mny = y; if (y > mxy) mxy = y;
+        for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+          const ni = ny * W + nx;
+          if (mask[ni] && lab[ni] < 0) { lab[ni] = out.length; st[sp++] = ni; }
+        }
+      }
+      out.push({ n, cx: sx / n, cy: sy / n, w: mxx - mnx + 1, h: mxy - mny + 1,
+                 x0: mnx, y0: mny, x1: mxx, y1: mxy });
+    }
+    return out.filter(c => c.n >= minPix);
+  }
+
+  /* ------------------------------------------------- hexagones de placement */
+  function orangeCenters(d, W, H) {
+    const mask = new Uint8Array(W * H);
+    for (let i = 0, j = 0; i < W * H; i++, j += 4) {
+      const r = d[j], g = d[j + 1], b = d[j + 2];
+      if (r > 125 && r - g > 50 && g - b > 5 && b < 115) mask[i] = 1;
+    }
+    const comps = components(mask, W, H, 45);
+    // un hexagone fait ~0,75 case de large et 2x moins haut : ratio ~2
+    return comps.filter(c => c.w > 12 && c.w < 260 && c.h > 5 && c.h < 140 &&
+                             c.w / c.h > 1.2 && c.w / c.h < 4.2);
+  }
+
+  /* --------------------------------------------------------- pas de grille */
+  function fitLattice(pts) {
+    if (pts.length < 3) return null;
+    const ref = pts.reduce((a, b) => (a.cy < b.cy ? a : b));
+    let best = null;
+    for (let hw = 120; hw >= 16; hw -= 0.25) {
+      const hh = hw / 2;
+      let err = 0;
+      for (const p of pts) {
+        const a = (p.cx - ref.cx) / hw, b = (p.cy - ref.cy) / hh;
+        const u = (a + b) / 2, v = (b - a) / 2;
+        const du = u - Math.round(u), dv = v - Math.round(v);
+        err += du * du + dv * dv;
+      }
+      err = Math.sqrt(err / pts.length);
+      if (err < 0.085) { best = { hw, hh, err }; break; }   // le plus grand pas valable
+      if (!best || err < best.err) best = { hw, hh, err, weak: true };
+    }
+    if (!best || best.err > 0.2) return null;
+    // affinage de l'origine : moyenne des residus
+    const { hw, hh } = best;
+    let sx = 0, sy = 0;
+    for (const p of pts) {
+      const a = (p.cx - ref.cx) / hw, b = (p.cy - ref.cy) / hh;
+      const u = Math.round((a + b) / 2), v = Math.round((b - a) / 2);
+      sx += p.cx - (u - v) * hw; sy += p.cy - (u + v) * hh;
+    }
+    return { hw, hh, ox: sx / pts.length, oy: sy / pts.length, err: best.err };
+  }
+
+  /* Balayage complet : score de "hexagone orange" pour chaque case de la grille.
+     Recupere aussi les hexagones partiellement masques par les sprites.      */
+  function ringScore(d, W, H, L, u, v) {
+    const cx = L.ox + (u - v) * L.hw, cy = L.oy + (u + v) * L.hh;
+    let hit = 0, tot = 0;
+    for (let dy = -L.hh; dy <= L.hh; dy++)
+      for (let dx = -L.hw; dx <= L.hw; dx++) {
+        const m = Math.abs(dx) / L.hw + Math.abs(dy) / L.hh;
+        if (m < 0.5 || m > 0.95) continue;
+        const x = Math.round(cx + dx), y = Math.round(cy + dy);
+        if (x < 0 || y < 0 || x >= W || y >= H) continue;
+        const i = (y * W + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+        tot++;
+        if (r > 110 && r - g > 45 && g - b > 5 && b < 120) hit++;
+      }
+    return tot ? hit / tot : 0;
+  }
+
+  function sweepCells(d, W, H, L) {
+    const corners = [[0, 0], [W, 0], [0, H], [W, H]].map(c => {
+      const a = (c[0] - L.ox) / L.hw, b = (c[1] - L.oy) / L.hh;
+      return [(a + b) / 2, (b - a) / 2];
+    });
+    const u0 = Math.floor(Math.min(...corners.map(c => c[0]))) - 1;
+    const u1 = Math.ceil(Math.max(...corners.map(c => c[0]))) + 1;
+    const v0 = Math.floor(Math.min(...corners.map(c => c[1]))) - 1;
+    const v1 = Math.ceil(Math.max(...corners.map(c => c[1]))) + 1;
+    const found = [];
+    for (let u = u0; u <= u1; u++)
+      for (let v = v0; v <= v1; v++) {
+        const s = ringScore(d, W, H, L, u, v);
+        if (s > 0.02) found.push({ u, v, s });
+      }
+    if (!found.length) return [];
+    found.sort((a, b) => b.s - a.s);
+    // seuil adaptatif : on coupe au plus grand ecart relatif dans le haut du classement
+    const top = found[0].s;
+    let cut = Math.max(0.09, top * 0.33);
+    const strong = found.filter(f => f.s >= cut);
+    return strong;
+  }
+
+  const toCell = (L, x, y) => {
+    const a = (x - L.ox) / L.hw, b = (y - L.oy) / L.hh;
+    return [Math.round((a + b) / 2), Math.round((b - a) / 2)];
+  };
+  const toXY = (L, u, v) => [L.ox + (u - v) * L.hw, L.oy + (u + v) * L.hh];
+
+  /* ------------------------------------------------------ couleur du souffle */
+  function headDarkness(d, W, H, L, u, v) {
+    const [cx, cy] = toXY(L, u, v);
+    const y0 = cy - 1.78 * L.hw, y1 = cy - 0.88 * L.hw;
+    const x0 = cx - 0.52 * L.hw, x1 = cx + 0.52 * L.hw;
+    let dark = 0, n = 0;
+    for (let y = Math.round(y0); y <= y1; y++) {
+      if (y < 0 || y >= H) continue;
+      for (let x = Math.round(x0); x <= x1; x++) {
+        if (x < 0 || x >= W) continue;
+        const i = (y * W + x) * 4;
+        n++;
+        if (luminance(d[i], d[i + 1], d[i + 2]) < 64) dark++;
+      }
+    }
+    return n ? dark / n : 0;
+  }
+
+  /* ------------------------------------------------------------ personnage */
+  // Les cases de deplacement/placement libres sont vert vif ; la case occupee
+  // par le personnage porte un liseré blanc au milieu de ces cases vertes.
+  // Fractions "vert de deplacement" et "liseré blanc" d'une case.
+  function cellStats(d, W, H, L, u, v) {
+    const cx = L.ox + (u - v) * L.hw, cy = L.oy + (u + v) * L.hh;
+    let wh = 0, gr = 0, n = 0;
+    for (let dy = -L.hh; dy <= L.hh; dy++)
+      for (let dx = -L.hw; dx <= L.hw; dx++) {
+        if (Math.abs(dx) / L.hw + Math.abs(dy) / L.hh > 0.95) continue;
+        const x = Math.round(cx + dx), y = Math.round(cy + dy);
+        if (x < 0 || y < 0 || x >= W || y >= H) continue;
+        const i = (y * W + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+        n++;
+        const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+        if (mx > 200 && mx - mn < 40) wh++;
+        if (g > 95 && g - r > 40 && g - b > 40) gr++;
+      }
+    return n ? { wh: wh / n, gr: gr / n } : { wh: 0, gr: 0 };
+  }
+
+  /* Le personnage se tient sur une case de la zone verte de placement :
+     cette case n'est donc que partiellement verte et porte le liseré blanc
+     de selection du personnage.                                            */
+  function playerCell(d, W, H, L, occupied) {
+    const green = new Uint8Array(W * H);
+    for (let i = 0, j = 0; i < W * H; i++, j += 4) {
+      const r = d[j], g = d[j + 1], b = d[j + 2];
+      if (g > 95 && g - r > 40 && g - b > 40) green[i] = 1;
+    }
+    const cellPix = new Map();
+    for (let i = 0; i < W * H; i++) {
+      if (!green[i]) continue;
+      const x = i % W, y = (i - x) / W;
+      const k = toCell(L, x, y).join(',');
+      cellPix.set(k, (cellPix.get(k) || 0) + 1);
+    }
+    if (!cellPix.size) return null;
+    const minPix = Math.max(30, L.hw * L.hh * 0.12);
+    const cand = [];
+    for (const [k, px] of cellPix) {
+      if (px < minPix) continue;
+      if (occupied.has(k)) continue;
+      const [u, v] = k.split(',').map(Number);
+      const st = cellStats(d, W, H, L, u, v);
+      cand.push({ u, v, ...st });
+    }
+    if (!cand.length) return null;
+    // case partiellement verte + liseré blanc marque = personnage
+    const inner = cand.filter(c => c.gr < 0.72);
+    const pool = inner.length ? inner : cand;
+    pool.sort((a, b) => b.wh - a.wh);
+    if (pool[0].wh < 0.02) {
+      // repli : le "trou" entoure par le plus de cases vertes
+      const gset = new Set(cand.filter(c => c.gr >= 0.72).map(c => c.u + ',' + c.v));
+      const near = new Map();
+      for (const k of gset) {
+        const [u, v] = k.split(',').map(Number);
+        for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nk = (u + du) + ',' + (v + dv);
+          if (gset.has(nk) || occupied.has(nk)) continue;
+          near.set(nk, (near.get(nk) || 0) + 1);
+        }
+      }
+      let bk = null, bn = -1;
+      for (const [k, n] of near) if (n > bn) { bn = n; bk = k.split(',').map(Number); }
+      return bk;
+    }
+    return [pool[0].u, pool[0].v];
+  }
+
+  function whiteRing(d, W, H, L, u, v) {
+    const [cx, cy] = toXY(L, u, v);
+    let hit = 0, tot = 0;
+    for (let dy = -L.hh; dy <= L.hh; dy++) {
+      for (let dx = -L.hw; dx <= L.hw; dx++) {
+        const m = Math.abs(dx) / L.hw + Math.abs(dy) / L.hh;
+        if (m < 0.45 || m > 0.95) continue;
+        const x = Math.round(cx + dx), y = Math.round(cy + dy);
+        if (x < 0 || y < 0 || x >= W || y >= H) continue;
+        const i = (y * W + x) * 4;
+        const r = d[i], g = d[i + 1], b = d[i + 2];
+        const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+        tot++;
+        if (mx > 190 && mx - mn < 45) hit++;
+      }
+    }
+    return tot ? hit / tot : 0;
+  }
+
+  /* -------------------------------------------------- recalage sur l'arene */
+  /* Etendue du sol de l'arene : sert de repere absolu pour le recalage.
+     On prend la plus grande zone "beige" de la capture et on mesure ses
+     extremes selon les deux axes de la grille.                             */
+  function arenaAnchor(d, W, H, L) {
+    const m = new Uint8Array(W * H);
+    for (let i = 0, j = 0; i < W * H; i++, j += 4) {
+      const r = d[j], g = d[j + 1], b = d[j + 2];
+      const l = 0.299 * r + 0.587 * g + 0.114 * b, c = r - b;
+      if (l > 110 && c > 14 && c < 72) m[i] = 1;
+    }
+    const lab = new Int32Array(W * H).fill(-1), st = new Int32Array(W * H);
+    let bestN = 0, bestId = -1, nc = 0;
+    for (let i = 0; i < W * H; i++) {
+      if (!m[i] || lab[i] >= 0) continue;
+      let sp = 0; st[sp++] = i; lab[i] = nc; let n = 0;
+      while (sp) {
+        const c = st[--sp], x = c % W, y = (c - x) / W; n++;
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+          const ni = ny * W + nx;
+          if (m[ni] && lab[ni] < 0) { lab[ni] = nc; st[sp++] = ni; }
+        }
+      }
+      if (n > bestN) { bestN = n; bestId = nc; }
+      nc++;
+    }
+    if (bestId < 0 || bestN < 2000) return null;
+    let minS = 1e9, maxS = -1e9, minD = 1e9, maxD = -1e9;
+    for (let i = 0; i < W * H; i++) {
+      if (lab[i] !== bestId) continue;
+      const x = i % W, y = (i - x) / W;
+      const a = (x - L.ox) / L.hw, b = (y - L.oy) / L.hh;
+      const u = (a + b) / 2, v = (b - a) / 2, sSum = u + v, sDif = u - v;
+      if (sSum < minS) minS = sSum; if (sSum > maxS) maxS = sSum;
+      if (sDif < minD) minD = sDif; if (sDif > maxD) maxD = sDif;
+    }
+    return { cs: (minS + maxS) / 2, cd: (minD + maxD) / 2, area: bestN };
+  }
+
+  function align(cells, player, solver, anchor) {
+    const map = solver.makeMap(null, null);
+    const all = cells.map(c => [c.u, c.v]);
+    if (player) all.push(player);
+    const modelCS = (solver.S_MIN + solver.S_MAX) / 2;
+    const modelCD = (solver.D_MIN + solver.D_MAX) / 2;
+    const tgtSum = anchor ? modelCS - anchor.cs : null;
+    const tgtDif = anchor ? modelCD - anchor.cd : null;
+
+    let best = null;
+    for (let du = -28; du <= 28; du++)
+      for (let dv = -28; dv <= 28; dv++) {
+        let onFloor = 0;
+        for (const [u, v] of all) {
+          const a = u + du, b = v + dv;
+          if (solver.inRect(a, b) && map.free(solver.cid(a, b))) onFloor++;
+        }
+        if (!onFloor) continue;
+        let pen;
+        if (tgtSum !== null)
+          pen = Math.abs((du + dv) - tgtSum) + Math.abs((du - dv) - tgtDif);
+        else {
+          const cu0 = all.reduce((s, c) => s + c[0] + du, 0) / all.length;
+          const cv0 = all.reduce((s, c) => s + c[1] + dv, 0) / all.length;
+          pen = Math.abs(cu0 - 4) + Math.abs(cv0 - 4);
+        }
+        const sc = onFloor * 100 - pen;
+        if (!best || sc > best.sc) best = { du, dv, sc, onFloor, pen };
+      }
+    return best;
+  }
+
+  /* ------------------------------------------------------------------ API */
+  function detect(d, W, H, solver) {
+    const pts = orangeCenters(d, W, H);
+    if (pts.length < 3)
+      return { ok: false, reason: "Impossible de repérer les cases oranges des souffles. Prends la capture pendant la phase de placement (ou au début de ton tour), sans interface par-dessus." };
+
+    const L = fitLattice(pts);
+    if (!L)
+      return { ok: false, reason: "La grille n'a pas pu être calée sur la capture. Essaie une capture non redimensionnée." };
+
+    const cells = [];
+    const seen = new Set();
+    for (const f of sweepCells(d, W, H, L)) {
+      const k = f.u + ',' + f.v;
+      if (seen.has(k)) continue;
+      seen.add(k);
+      const dk = headDarkness(d, W, H, L, f.u, f.v);
+      cells.push({ u: f.u, v: f.v, c: dk > 0.25 ? solver.NOIR : solver.BLANC, dark: dk, score: f.s });
+    }
+    if (!cells.length)
+      return { ok: false, reason: "Aucune case de souffle reconnue sur la capture." };
+    const player = playerCell(d, W, H, L, seen);
+
+    const anchor = arenaAnchor(d, W, H, L);
+    const off = align(cells, player, solver, anchor);
+    const du = off ? off.du : 0, dv = off ? off.dv : 0;
+
+    const moved = cells.map(c => ({ u: c.u + du, v: c.v + dv, c: c.c, dark: c.dark, score: c.score }));
+    const keep = moved.filter(c => solver.inRect(c.u, c.v));
+    const dropped = moved.length - keep.length;
+    let pl = player ? [player[0] + du, player[1] + dv] : null;
+    if (pl && !solver.inRect(pl[0], pl[1])) pl = null;
+
+    return {
+      ok: true,
+      lattice: L,
+      offset: { du, dv },
+      souffles: keep,
+      player: pl,
+      dropped,
+      raw: { cells, player, count: pts.length }
+    };
+  }
+
+  const API = { detect, arenaAnchor, fitLattice, orangeCenters, ringScore, sweepCells, playerCell, cellStats, toCell, toXY, headDarkness, whiteRing, align, components };
+  if (typeof module !== 'undefined' && module.exports) module.exports = API;
+  else root.JardinDetect = API;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* ============================================================================
+   Jardin Paradoxal — interface du solveur
+   ========================================================================== */
+(function () {
+  'use strict';
+  const S = window.JardinSolver, D = window.JardinDetect;
+  const $ = s => document.querySelector(s);
+  const NOIR = S.NOIR, BLANC = S.BLANC;
+
+  /* ------------------------------------------------------------------ etat */
+  const st = {
+    souffles: new Map(),          // "u,v" -> 0 | 1
+    player: null,                 // [u,v]
+    holes: new Set(S.DEFAULT_HOLES),
+    rocks: new Set(S.DEFAULT_ROCKS),
+    img: null, lattice: null, offset: { du: 0, dv: 0 },
+    bg: 'schema',
+    tool: 'noir',
+    plan: null, frame: 0
+  };
+
+  /* Position d'exemple : la capture fournie par le joueur. */
+  const DEMO = {
+    player: [5, 5],
+    souffles: [[0,0,1],[-1,-1,0],[5,-2,1],[6,-3,0],[5,0,0],[3,3,1],[2,4,0],[9,2,1],
+               [6,5,1],[2,11,1],[6,10,0],[12,6,0],[-1,9,1],[-1,5,0],[-2,4,1],[8,1,1],
+               [0,9,0],[12,1,1]]
+  };
+  function loadDemo() {
+    st.souffles.clear();
+    DEMO.souffles.forEach(s => st.souffles.set(s[0] + ',' + s[1], s[2]));
+    st.player = DEMO.player.slice();
+  }
+
+  /* ----------------------------------------------------------------- canvas */
+  const cv = $('#board'), ctx = cv.getContext('2d');
+  const CW = 1160, CH = 600, HW = 31, HH = 15.5;
+
+  function sizeCanvas() {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = CW * dpr; cv.height = CH * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function view() {
+    if (st.bg === 'capture' && st.img && st.lattice) {
+      const L = st.lattice;
+      const s = Math.min(CW / st.img.width, CH / st.img.height);
+      const offX = (CW - st.img.width * s) / 2, offY = (CH - st.img.height * s) / 2;
+      return {
+        kind: 'capture', s, offX, offY, hw: L.hw * s, hh: L.hh * s,
+        xy(u, v) {
+          const a = u - st.offset.du, b = v - st.offset.dv;
+          return [offX + (L.ox + (a - b) * L.hw) * s, offY + (L.oy + (a + b) * L.hh) * s];
+        },
+        cell(x, y) {
+          const px = (x - offX) / s, py = (y - offY) / s;
+          const a = (px - L.ox) / L.hw, b = (py - L.oy) / L.hh;
+          return [Math.round((a + b) / 2) + st.offset.du, Math.round((b - a) / 2) + st.offset.dv];
+        }
+      };
+    }
+    const ox = 42 + 17 * HW, oy = 46 + 8 * HH;
+    return {
+      kind: 'schema', hw: HW, hh: HH,
+      xy: (u, v) => [ox + (u - v) * HW, oy + (u + v) * HH],
+      cell(x, y) {
+        const a = (x - ox) / HW, b = (y - oy) / HH;
+        return [Math.round((a + b) / 2), Math.round((b - a) / 2)];
+      }
+    };
+  }
+
+  let palCache = null, palKey = '';
+  function pal() {
+    const k = (document.documentElement.getAttribute('data-theme') || '') +
+              (matchMedia('(prefers-color-scheme: dark)').matches ? 'D' : 'L');
+    if (palCache && palKey === k) return palCache;
+    const cs = getComputedStyle(document.documentElement);
+    const g = n => cs.getPropertyValue(n).trim();
+    palKey = k;
+    palCache = { bg3: g('--bg3'), floor: g('--floor'), floor2: g('--floor2'), hole: g('--hole'),
+                 rock: g('--rock'), accent: g('--accent'), jade: g('--jade'),
+                 wukin: g('--wukin'), wukinRing: g('--wukin-ring'),
+                 wukang: g('--wukang'), wukangRing: g('--wukang-ring') };
+    return palCache;
+  }
+
+  function diamond(V, u, v, k) {
+    const [x, y] = V.xy(u, v), hw = V.hw * (k || 1), hh = V.hh * (k || 1);
+    ctx.beginPath();
+    ctx.moveTo(x - hw, y); ctx.lineTo(x, y - hh); ctx.lineTo(x + hw, y); ctx.lineTo(x, y + hh);
+    ctx.closePath();
+  }
+
+  function drawBoard() {
+    const V = view();
+    ctx.clearRect(0, 0, CW, CH);
+    const P = pal();
+    ctx.fillStyle = P.bg3; ctx.fillRect(0, 0, CW, CH);
+
+    if (V.kind === 'capture') {
+      ctx.drawImage(st.img, V.offX, V.offY, st.img.width * V.s, st.img.height * V.s);
+      ctx.fillStyle = 'rgba(10,14,17,.42)';
+      ctx.fillRect(0, 0, CW, CH);
+    }
+
+    const map = S.makeMap([...st.holes], [...st.rocks]);
+    const fr = st.plan ? uiFrames()[st.frame] : null;
+    const snap = fr ? fr.before : null;
+    const step = fr && fr.step && fr.step.spell !== 'DONE' ? fr.step : null;
+
+    /* --- cases --- */
+    for (const c of map.cells) {
+      const isHole = st.holes.has(c.u + ',' + c.v), isRock = st.rocks.has(c.u + ',' + c.v);
+      if (V.kind === 'schema') {
+        diamond(V, c.u, c.v, 0.94);
+        ctx.fillStyle = isHole ? P.hole : isRock ? P.rock
+                      : ((c.u + c.v) & 1 ? P.floor : P.floor2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = 1; ctx.stroke();
+      } else if (isHole || isRock) {
+        diamond(V, c.u, c.v, 0.9);
+        ctx.strokeStyle = isRock ? P.rock : P.accent;
+        ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]); ctx.stroke(); ctx.setLineDash([]);
+      }
+    }
+
+    /* --- lignes de propagation de la case d'arrivee --- */
+    if (step && (step.spell === 'VP' || step.spell === 'RECI')) {
+      const au = S.cu(step.arrival), av = S.cv(step.arrival);
+      ctx.save();
+      ctx.strokeStyle = P.accent; ctx.globalAlpha = .55; ctx.lineWidth = 2; ctx.setLineDash([7, 6]);
+      for (const [du, dv] of [[1, 0], [0, 1]]) {
+        let a = au, b = av;
+        while (S.inRect(a - du, b - dv)) { a -= du; b -= dv; }
+        let e = au, f = av;
+        while (S.inRect(e + du, f + dv)) { e += du; f += dv; }
+        const p1 = V.xy(a, b), p2 = V.xy(e, f);
+        ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+      }
+      ctx.restore();
+      /* case d'arrivee */
+      diamond(V, au, av, 0.9);
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2.5; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    /* --- souffles --- */
+    const flippedSet = new Set();
+    if (step && step.flipped && snap)
+      step.flipped.forEach(i => flippedSet.add(snap.souffles[i].u + ',' + snap.souffles[i].v));
+
+    const list = snap ? snap.souffles.map(s => [s.u, s.v, s.c])
+                      : [...st.souffles].map(([k, c]) => [ ...k.split(',').map(Number), c ]);
+
+    for (const [u, v, c] of list) {
+      const [x, y] = V.xy(u, v);
+      const r = Math.max(6, V.hh * 0.8);
+      const k = u + ',' + v;
+      if (flippedSet.has(k)) {
+        ctx.beginPath(); ctx.arc(x, y, r + 5, 0, 6.284);
+        ctx.strokeStyle = P.accent; ctx.globalAlpha = .85; ctx.lineWidth = 2; ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      ctx.beginPath(); ctx.ellipse(x, y + 2, r * .95, r * .45, 0, 0, 6.284);
+      ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y - r * .25, r, 0, 6.284);
+      ctx.fillStyle = c === BLANC ? P.wukang : P.wukin;
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = c === BLANC ? P.wukangRing : P.wukinRing;
+      ctx.stroke();
+    }
+
+    /* --- cible --- */
+    if (step && (step.spell === 'VP' || step.spell === 'RECI')) {
+      const tu = S.cu(step.from), tv = S.cv(step.from);
+      const [x, y] = V.xy(tu, tv), r = Math.max(6, V.hh * 0.8);
+      ctx.beginPath(); ctx.arc(x, y - r * .25, r + 9, 0, 6.284);
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 3; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x, y - r * .25, r + 14, 0, 6.284);
+      ctx.globalAlpha = .35; ctx.lineWidth = 2; ctx.stroke(); ctx.globalAlpha = 1;
+    }
+
+    /* --- personnage --- */
+    const pl = snap ? snap.player : st.player;
+    if (pl) {
+      const [x, y] = V.xy(pl[0], pl[1]);
+      diamond(V, pl[0], pl[1], 0.86);
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y - V.hh * .95); ctx.lineTo(x + V.hw * .34, y);
+      ctx.lineTo(x, y + V.hh * .95); ctx.lineTo(x - V.hw * .34, y); ctx.closePath();
+      ctx.fillStyle = P.accent; ctx.fill();
+    }
+
+    /* --- fleche du sort --- */
+    if (step && pl) {
+      if (step.spell === 'VP') arrow(V, pl, [S.cu(step.from), S.cv(step.from)]);
+      else if (step.spell === 'RECI') arrow(V, pl, [S.cu(step.from), S.cv(step.from)], true);
+      else if (step.spell === 'MOVE') arrow(V, pl, [pl[0] + step.dir[0], pl[1] + step.dir[1]]);
+    }
+  }
+
+  function arrow(V, from, to, dashed) {
+    const P = pal();
+    const a = V.xy(from[0], from[1]), b = V.xy(to[0], to[1]);
+    const dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len, uy = dy / len;
+    const x1 = a[0] + ux * 20, y1 = a[1] + uy * 20 - 6;
+    const x2 = b[0] - ux * 24, y2 = b[1] - uy * 24 - 6;
+    ctx.save();
+    ctx.strokeStyle = P.accent; ctx.lineWidth = 2.5;
+    if (dashed) ctx.setLineDash([6, 5]);
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(x2 + ux * 9, y2 + uy * 9);
+    ctx.lineTo(x2 - uy * 6, y2 + ux * 6);
+    ctx.lineTo(x2 + uy * 6, y2 - ux * 6);
+    ctx.closePath(); ctx.fillStyle = P.accent; ctx.fill();
+    ctx.restore();
+  }
+
+  /* ------------------------------------------------------------- compteurs */
+  function refreshCounts() {
+    let n = 0, b = 0;
+    for (const c of st.souffles.values()) { if (c === BLANC) b++; else n++; }
+    $('#cntN').textContent = n; $('#cntB').textContent = b;
+    $('#chipPlayer').innerHTML = 'Personnage <b>' +
+      (st.player ? '(' + st.player[0] + ',' + st.player[1] + ')' : '—') + '</b>';
+  }
+
+  function redraw() { palCache = null; drawBoard(); refreshCounts(); }
+
+  /* ----------------------------------------------------------- interaction */
+  cv.addEventListener('click', e => {
+    const r = cv.getBoundingClientRect();
+    const x = (e.clientX - r.left) * CW / r.width, y = (e.clientY - r.top) * CH / r.height;
+    const [u, v] = view().cell(x, y);
+    if (!S.inRect(u, v)) return;
+    const k = u + ',' + v;
+    st.plan = null; $('#planZone').hidden = true; $('#solveMsg').innerHTML = '';
+    switch (st.tool) {
+      case 'noir': case 'blanc':
+        if (st.player && st.player[0] === u && st.player[1] === v) st.player = null;
+        st.holes.delete(k); st.rocks.delete(k);
+        st.souffles.set(k, st.tool === 'noir' ? NOIR : BLANC); break;
+      case 'player':
+        st.souffles.delete(k); st.holes.delete(k); st.rocks.delete(k);
+        st.player = [u, v]; break;
+      case 'erase':
+        st.souffles.delete(k); st.holes.delete(k); st.rocks.delete(k);
+        if (st.player && st.player[0] === u && st.player[1] === v) st.player = null; break;
+      case 'hole':
+        st.souffles.delete(k); st.rocks.delete(k);
+        if (st.holes.has(k)) st.holes.delete(k); else st.holes.add(k);
+        if (st.player && st.player[0] === u && st.player[1] === v) st.player = null; break;
+      case 'rock':
+        st.souffles.delete(k); st.holes.delete(k);
+        if (st.rocks.has(k)) st.rocks.delete(k); else st.rocks.add(k);
+        if (st.player && st.player[0] === u && st.player[1] === v) st.player = null; break;
+    }
+    redraw();
+  });
+
+  document.querySelectorAll('#tools .tool').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#tools .tool').forEach(x => x.classList.remove('on'));
+    b.classList.add('on'); st.tool = b.dataset.tool;
+  }));
+
+  $('#clearBoard').addEventListener('click', () => {
+    st.souffles.clear(); st.player = null; st.plan = null;
+    $('#planZone').hidden = true; $('#solveMsg').innerHTML = '';
+    redraw();
+  });
+
+  $('#bgToggle').addEventListener('click', () => {
+    st.bg = st.bg === 'schema' ? 'capture' : 'schema';
+    $('#bgToggle').textContent = 'Fond : ' + (st.bg === 'schema' ? 'schéma' : 'capture');
+    redraw();
+  });
+
+  document.querySelectorAll('[data-nudge]').forEach(b => b.addEventListener('click', () => {
+    const [du, dv] = b.dataset.nudge.split(',').map(Number);
+    st.offset.du += du; st.offset.dv += dv;
+    const moved = new Map();
+    for (const [k, c] of st.souffles) {
+      const [u, v] = k.split(',').map(Number);
+      moved.set((u + du) + ',' + (v + dv), c);
+    }
+    st.souffles = moved;
+    if (st.player) st.player = [st.player[0] + du, st.player[1] + dv];
+    st.plan = null; $('#planZone').hidden = true;
+    redraw();
+  }));
+
+  $('#theme').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+    redraw();
+  });
+
+  /* ---------------------------------------------------------------- import */
+  const drop = $('#drop'), fileIn = $('#file');
+  drop.addEventListener('click', () => fileIn.click());
+  drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileIn.click(); } });
+  fileIn.addEventListener('change', () => { if (fileIn.files[0]) handleFile(fileIn.files[0]); });
+  ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) handleFile(f); });
+  window.addEventListener('paste', e => {
+    for (const it of (e.clipboardData || {}).items || [])
+      if (it.type.startsWith('image/')) { handleFile(it.getAsFile()); break; }
+  });
+
+  function say(el, cls, html) { el.innerHTML = '<div class="msg ' + cls + '">' + html + '</div>'; }
+
+  function handleFile(file) {
+    const msg = $('#detectMsg');
+    say(msg, 'ok', 'Analyse de la capture…');
+    const fr = new FileReader();
+    fr.onload = () => {
+      const img = new Image();
+      img.onload = () => runDetect(img);
+      img.onerror = () => say(msg, 'err', "Impossible de lire cette image.");
+      img.src = fr.result;                       // data: URL — lisible par le canvas
+    };
+    fr.onerror = () => say(msg, 'err', "Lecture du fichier impossible.");
+    fr.readAsDataURL(file);
+  }
+
+  function runDetect(img) {
+    const msg = $('#detectMsg');
+    const c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height;
+    const x = c.getContext('2d', { willReadFrequently: true });
+    x.drawImage(img, 0, 0);
+    let px;
+    try { px = x.getImageData(0, 0, c.width, c.height); }
+    catch (err) { say(msg, 'err', "Cette image ne peut pas être analysée par le navigateur."); return; }
+
+    const r = D.detect(px.data, c.width, c.height, S);
+    if (!r.ok) { say(msg, 'err', r.reason); return; }
+
+    st.img = img; st.lattice = r.lattice; st.offset = { du: r.offset.du, dv: r.offset.dv };
+    st.souffles.clear();
+    r.souffles.forEach(s => st.souffles.set(s.u + ',' + s.v, s.c));
+    st.player = r.player;
+    st.plan = null; $('#planZone').hidden = true; $('#solveMsg').innerHTML = '';
+    st.bg = 'capture';
+    $('#bgToggle').disabled = false;
+    $('#bgToggle').textContent = 'Fond : capture';
+    $('#nudgeRow').hidden = false;
+
+    const n = r.souffles.filter(s => s.c === NOIR).length;
+    const b = r.souffles.length - n;
+    let txt = '<b>' + r.souffles.length + ' souffles</b> détectés — ' + n + ' Wukin, ' + b + ' Wukang.';
+    txt += st.player ? ' Personnage en <b>(' + st.player[0] + ',' + st.player[1] + ')</b>.'
+                     : ' <b>Personnage non trouvé</b> : choisis l’outil « Personnage » et clique sa case.';
+    if (r.dropped) txt += ' ' + r.dropped + ' repère(s) hors terrain ignoré(s).';
+    txt += '<br><span style="color:var(--muted)">Vérifie le plateau, corrige au clic si besoin.</span>';
+    say(msg, st.player ? 'ok' : 'warn', txt);
+    redraw();
+  }
+
+  /* -------------------------------------------------------------- resoudre */
+  $('#optColor').addEventListener('change', e => { $('#colorSel').disabled = !e.target.checked; });
+
+  $('#solve').addEventListener('click', () => {
+    const msg = $('#solveMsg');
+    if (!st.player) { say(msg, 'err', "Place d’abord ton personnage (outil « Personnage »)."); return; }
+    if (!st.souffles.size) { say(msg, 'err', "Aucun souffle sur le plateau."); return; }
+    const btn = $('#solve');
+    btn.disabled = true; btn.textContent = 'Calcul en cours…';
+    say(msg, 'ok', 'Exploration des combinaisons…');
+    requestAnimationFrame(() => setTimeout(() => {
+      const souffles = [...st.souffles].map(([k, c]) => [...k.split(',').map(Number), c]);
+      const forced = $('#optColor').checked ? Number($('#colorSel').value) : null;
+      let res;
+      try {
+        res = S.solve(st.player, souffles, {
+          holes: [...st.holes], rocks: [...st.rocks], budgetMs: 2600, forceColor: forced
+        });
+      } catch (err) { res = { ok: false, reason: 'Erreur interne : ' + err.message }; }
+      btn.disabled = false; btn.textContent = 'Calculer la solution';
+      if (!res.ok) { say(msg, 'err', res.reason); return; }
+      msg.innerHTML = '';
+      st.plan = res; st.frame = 0;
+      showPlan();
+    }, 30));
+  });
+
+  /* ------------------------------------------------------------------ plan */
+  const SPELL_NAME = { VP: 'Vibration Paradoxale', RECI: 'Réciprocité', MOVE: 'Déplacement', END: 'Fin de tour' };
+  const colName = c => c === BLANC ? 'Wukang (blanc)' : 'Wukin (noir)';
+
+  function relDesc(du, dv) {
+    const parts = [];
+    if (du) parts.push(Math.abs(du) + ' × ' + S.dirInfo(du > 0 ? [1, 0] : [-1, 0]).arrow);
+    if (dv) parts.push(Math.abs(dv) + ' × ' + S.dirInfo(dv > 0 ? [0, 1] : [0, -1]).arrow);
+    return parts.join(' puis ');
+  }
+
+  function describe(step, before) {
+    if (step.spell === 'END') return { title: 'Fin de tour', body: 'Passe ton tour. Tu perdras 1 PV au début du suivant.', sub: '' };
+    if (step.spell === 'MOVE') {
+      const i = S.dirInfo(step.dir);
+      return { title: 'Déplacement (1 PM)', body: 'Avance d’<b>1 case</b> vers ' + i.arrow + ' <b>' + i.label + '</b>.', sub: '' };
+    }
+    const tu = S.cu(step.from), tv = S.cv(step.from);
+    const au = S.cu(step.arrival), av = S.cv(step.arrival);
+    const nb = step.flipped.length + 1;
+    const become = colName(1 - step.color).replace(' (', ' — ').replace(')', '');
+    if (step.spell === 'VP') {
+      const i = S.dirInfo(step.dir);
+      const dist = Math.abs(tu - before.player[0]) + Math.abs(tv - before.player[1]);
+      const act = step.color === NOIR ? 'poussé' : 'attiré';
+      return {
+        title: 'Vibration Paradoxale — 1 PA',
+        body: 'Cible le souffle <b>' + colName(step.color) + '</b> aligné vers ' + i.arrow +
+              ' <b>' + i.label + '</b>, à <b>' + dist + ' case' + (dist > 1 ? 's' : '') + '</b> ' +
+              '<span style="color:var(--muted)">(c’est le premier souffle dans cette direction)</span>.',
+        sub: (step.moved ? 'Il est <b>' + act + '</b> jusqu’en (' + au + ',' + av + ')'
+                         : 'Bloqué : il <b>reste sur sa case</b> (' + au + ',' + av + ')') +
+             ' · <b>' + nb + ' souffle' + (nb > 1 ? 's' : '') + '</b> change' + (nb > 1 ? 'nt' : '') +
+             ' de couleur : la cible' + (step.flipped.length
+               ? ' et ' + step.flipped.length + ' autre' + (step.flipped.length > 1 ? 's' : '') +
+                 ', sur les deux lignes pointillées de la case d’arrivée.' : ' seule.')
+      };
+    }
+    const du = tu - before.player[0], dv = tv - before.player[1];
+    return {
+      title: 'Réciprocité — 2 PA',
+      body: 'Cible le souffle <b>' + colName(step.color) + '</b> en <b>(' + tu + ',' + tv + ')</b> — ' +
+            relDesc(du, dv) + ' depuis ta case. Vous échangez de place.',
+      sub: 'Case d’arrivée = <b>ta case actuelle (' + au + ',' + av + ')</b> · <b>' + nb +
+           ' souffle' + (nb > 1 ? 's' : '') + '</b> change' + (nb > 1 ? 'nt' : '') + ' de couleur : la cible' +
+           (step.flipped.length ? ' et ' + step.flipped.length + ' sur les lignes pointillées.' : ' seule.')
+    };
+  }
+
+  function showPlan() {
+    const p = st.plan;
+    $('#planZone').hidden = false;
+    $('#planTitle').textContent = p.already ? 'Déjà gagné' :
+      'Tout passer en ' + (p.color === BLANC ? 'Wukang (blanc)' : 'Wukin (noir)');
+    const hp = p.steps.filter(s => s.spell === 'VP').length + 3 * p.steps.filter(s => s.spell === 'RECI').length + (p.turns - 1);
+    $('#planSummary').innerHTML =
+      '<span class="big">' + p.spells + ' sort' + (p.spells > 1 ? 's' : '') + '</span>' +
+      '<span class="stat"><b>' + p.turns + '</b> tour' + (p.turns > 1 ? 's' : '') + '</span>' +
+      '<span class="stat">coût <b>' + hp + ' PV</b> sur 50</span>' +
+      '<span class="stat">' + (p.moves || 0) + ' déplacement' + ((p.moves || 0) > 1 ? 's' : '') + '</span>';
+
+    const list = $('#stepList'); list.innerHTML = '';
+    let turn = 1, idx = 0;
+    addTurn(list, 1);
+    p.steps.forEach((s, i) => {
+      if (s.spell === 'END') { turn++; addTurn(list, turn); return; }
+      idx++;
+      const li = document.createElement('li');
+      li.dataset.frame = i + 1;
+      li.innerHTML = '<span class="i">' + (s.spell === 'MOVE' ? '·' : idx) + '</span><span>' +
+        (s.spell === 'MOVE'
+          ? 'Déplacement ' + S.dirInfo(s.dir).arrow
+          : (s.spell === 'VP' ? 'Vibration ' + S.dirInfo(s.dir).arrow : 'Réciprocité') +
+            ' <span style="color:var(--muted)">→ (' + S.cu(s.arrival) + ',' + S.cv(s.arrival) + ') · ' +
+            (s.flipped.length + 1) + ' retourné' + (s.flipped.length ? 's' : '') + '</span>') +
+        '</span>';
+      li.addEventListener('click', () => { st.frame = i + 1; renderStep(); });
+      list.appendChild(li);
+    });
+    st.frame = p.steps.length ? 1 : 0;
+    renderStep();
+    const pz = $('#planZone');
+    if (pz.scrollIntoView) pz.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function addTurn(list, n) {
+    const li = document.createElement('li');
+    li.className = 'turn'; li.textContent = 'Tour ' + n;
+    list.appendChild(li);
+  }
+
+  function uiFrames() {
+    const p = st.plan;
+    return p.timeline.frames.concat([{ before: p.timeline.final, step: { spell: 'DONE' } }]);
+  }
+
+  function renderStep() {
+    const p = st.plan; if (!p) return;
+    const frames = uiFrames();
+    st.frame = Math.max(0, Math.min(frames.length - 1, st.frame));
+    const fr = frames[st.frame];
+    const card = $('#stepCard');
+
+    if (!fr.step) {
+      card.innerHTML = '<div class="k"><span class="num">Départ</span><span class="spell">Position initiale</span></div>' +
+        '<p>Voici ta position de départ. Clique <b>Suivant</b> pour dérouler le plan, sort par sort.</p>';
+    } else if (fr.step.spell === 'DONE') {
+      const c = p.color === BLANC ? 'Wukang (blancs)' : 'Wukin (noirs)';
+      const n = fr.before.souffles.length;
+      card.innerHTML = '<div class="k"><span class="num">Terminé</span><span class="spell">Les ' + n + ' souffles sont unis</span></div>' +
+        '<p>Tous les souffles sont <b>' + c + '</b>. Termine ton tour : le combat se conclut au tour du Reflet.</p>' +
+        '<p class="sub">PV restants : <b>' + fr.before.hp + '</b>/50</p>';
+    } else {
+      const d = describe(fr.step, fr.before);
+      const spellIdx = frames.slice(1, st.frame + 1).filter(f => f.step.spell === 'VP' || f.step.spell === 'RECI').length;
+      const total = p.spells;
+      card.innerHTML =
+        '<div class="k"><span class="num">Tour ' + fr.before.turn +
+          (fr.step.spell === 'VP' || fr.step.spell === 'RECI' ? ' · sort ' + spellIdx + '/' + total : '') +
+          '</span><span class="spell">' + d.title + '</span></div>' +
+        '<p>' + d.body + '</p>' + (d.sub ? '<p class="sub">' + d.sub + '</p>' : '') +
+        '<p class="sub">PA restants après ce sort : <b>' + (fr.after ? fr.after.pa : fr.before.pa) + '</b>/10' +
+        ' · PV : <b>' + (fr.after ? fr.after.hp : fr.before.hp) + '</b></p>';
+    }
+
+    document.querySelectorAll('#stepList li').forEach(li => {
+      li.classList.toggle('cur', Number(li.dataset.frame) === st.frame);
+    });
+    const cur = document.querySelector('#stepList li.cur');
+    if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest' });
+    $('#prev').disabled = st.frame <= 0;
+    $('#next').disabled = st.frame >= frames.length - 1;
+    redraw();
+  }
+
+  $('#prev').addEventListener('click', () => { st.frame--; renderStep(); });
+  $('#next').addEventListener('click', () => { st.frame++; renderStep(); });
+  window.addEventListener('keydown', e => {
+    if (!st.plan) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    if (e.key === 'ArrowRight') { st.frame++; renderStep(); }
+    if (e.key === 'ArrowLeft') { st.frame--; renderStep(); }
+  });
+
+  $('#copyPlan').addEventListener('click', () => {
+    const p = st.plan; if (!p) return;
+    const frames = p.timeline.frames;
+    let out = 'Jardin Paradoxal — tout passer en ' +
+      (p.color === BLANC ? 'WUKANG (blanc)' : 'WUKIN (noir)') +
+      ' · ' + p.spells + ' sorts, ' + p.turns + ' tour(s)\n';
+    let turn = 1, idx = 0;
+    out += '\n-- Tour 1 --\n';
+    p.steps.forEach((s, i) => {
+      if (s.spell === 'END') { turn++; out += '\n-- Tour ' + turn + ' --\n'; return; }
+      const d = describe(s, frames[i].before);
+      idx += (s.spell === 'MOVE' ? 0 : 1);
+      out += (s.spell === 'MOVE' ? '   ' : String(idx).padStart(2, ' ') + '.') + ' ' +
+        d.title + ' — ' + (d.body + ' ' + d.sub).replace(/<[^>]+>/g, '') + '\n';
+    });
+    const done = ok => {
+      $('#copyPlan').textContent = ok ? 'Copié ✓' : 'Copie impossible';
+      setTimeout(() => $('#copyPlan').textContent = 'Copier le plan', 1800);
+    };
+    const fallback = () => {
+      const ta = document.createElement('textarea');
+      ta.value = out; ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta); done(ok);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(out).then(() => done(true), fallback);
+    else fallback();
+  });
+
+  /* ------------------------------------------------------------------ boot */
+  sizeCanvas();
+  loadDemo();
+  redraw();
+  window.addEventListener('resize', () => { sizeCanvas(); redraw(); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+})();
+
+</script>

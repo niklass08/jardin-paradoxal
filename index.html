@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jardin Paradoxal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ---------------------------------------------------------------- tokens */
+:root{
+  --bg:#101519; --bg2:#161d22; --bg3:#1d262c;
+  --line:#2a343b; --line2:#3a464f;
+  --text:#e7edf0; --muted:#93a2ab; --faint:#6c7c86;
+  --accent:#d8593f; --accent-soft:#3a2119;
+  --jade:#5fa389; --jade-soft:#16302a;
+  --gold:#c9a227;
+  --floor:#39454e; --floor2:#2f3a42; --hole:#0b0f12; --rock:#4e5c66;
+  --wukin:#0d1114; --wukin-ring:#7d8d97;
+  --wukang:#eee9dd; --wukang-ring:#7a6f5c;
+  --shadow:0 1px 0 rgba(255,255,255,.04), 0 10px 30px -18px rgba(0,0,0,.9);
+  --r:10px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#e9e6df; --bg2:#f5f3ee; --bg3:#eceae3;
+    --line:#d2cdc2; --line2:#bdb6a8;
+    --text:#1b2227; --muted:#606c76; --faint:#8b949c;
+    --accent:#bd472c; --accent-soft:#f6e3dd;
+    --jade:#3d7a63; --jade-soft:#e0eee8;
+    --gold:#9a7d12;
+    --floor:#cfc9ba; --floor2:#c2bbaa; --hole:#6d6a63; --rock:#a09786;
+    --wukin:#1a1f23; --wukin-ring:#5c6870;
+    --wukang:#fbf8f1; --wukang-ring:#a2957f;
+    --shadow:0 1px 0 rgba(255,255,255,.7), 0 10px 26px -20px rgba(40,34,24,.6);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#e9e6df; --bg2:#f5f3ee; --bg3:#eceae3;
+  --line:#d2cdc2; --line2:#bdb6a8;
+  --text:#1b2227; --muted:#606c76; --faint:#8b949c;
+  --accent:#bd472c; --accent-soft:#f6e3dd;
+  --jade:#3d7a63; --jade-soft:#e0eee8;
+  --gold:#9a7d12;
+  --floor:#cfc9ba; --floor2:#c2bbaa; --hole:#6d6a63; --rock:#a09786;
+  --wukin:#1a1f23; --wukin-ring:#5c6870;
+  --wukang:#fbf8f1; --wukang-ring:#a2957f;
+  --shadow:0 1px 0 rgba(255,255,255,.7), 0 10px 26px -20px rgba(40,34,24,.6);
+  color-scheme:light;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font:400 15px/1.55 "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Shippori Mincho", Georgia, serif; font-weight:700; text-wrap:balance; margin:0}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+
+.wrap{max-width:1320px; margin:0 auto; padding-inline:18px; padding-block:22px 60px}
+
+/* ------------------------------------------------------------------ head */
+header.top{display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px 22px; margin-bottom:20px}
+.brand{display:flex; align-items:center; gap:13px}
+.yy{width:38px;height:38px;flex:none}
+.brand h1{font-size:26px; letter-spacing:.01em; line-height:1.1}
+.brand p{margin:2px 0 0; color:var(--muted); font-size:13px}
+.top .spacer{flex:1}
+.themeBtn{background:none;border:1px solid var(--line);border-radius:99px;padding:6px 13px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.themeBtn:hover{border-color:var(--line2); color:var(--text)}
+
+/* ------------------------------------------------------------------ grid */
+.cols{display:grid; grid-template-columns:minmax(0,1fr) 372px; gap:20px; align-items:start}
+@media (max-width:980px){ .cols{grid-template-columns:minmax(0,1fr)} }
+
+.panel{background:var(--bg2); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+.panel > .hd{display:flex; align-items:center; gap:10px; padding:12px 15px; border-bottom:1px solid var(--line)}
+.panel > .hd h2{font-size:15px; letter-spacing:.02em}
+.panel > .bd{padding:15px}
+.eyebrow{font:500 10.5px/1 "IBM Plex Mono",monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--faint)}
+
+/* ----------------------------------------------------------------- board */
+.boardWrap{position:relative; background:var(--bg3); border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+canvas#board{display:block; width:100%; height:auto; touch-action:manipulation; cursor:crosshair}
+.boardBar{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--line); background:var(--bg2)}
+.chip{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); border-radius:99px;
+      padding:5px 11px; font:500 12.5px/1 "IBM Plex Mono",monospace; color:var(--muted); background:var(--bg3)}
+.chip b{color:var(--text); font-weight:500}
+.dot{width:11px;height:11px;border-radius:99px;flex:none}
+.dot.n{background:var(--wukin); border:1.5px solid var(--wukin-ring)}
+.dot.b{background:var(--wukang); border:1.5px solid var(--wukang-ring)}
+
+/* --------------------------------------------------------------- buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+     border:1px solid var(--line2); background:var(--bg3); color:var(--text);
+     padding:8px 13px; border-radius:8px; cursor:pointer; font-size:13.5px; line-height:1.2}
+.btn:hover{border-color:var(--accent); color:var(--text)}
+.btn[disabled]{opacity:.45; cursor:not-allowed; border-color:var(--line)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:500}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:none; border-color:var(--line)}
+.btn.sm{padding:5px 9px; font-size:12.5px}
+.btn.on{border-color:var(--accent); background:var(--accent-soft); color:var(--text)}
+.row{display:flex; flex-wrap:wrap; gap:8px}
+
+/* ---------------------------------------------------------------- import */
+.drop{border:1.5px dashed var(--line2); border-radius:var(--r); padding:18px 14px; text-align:center;
+      background:var(--bg3); cursor:pointer; transition:border-color .15s, background .15s}
+.drop:hover,.drop.over{border-color:var(--accent); background:var(--accent-soft)}
+.drop strong{display:block; font-size:14px; margin-bottom:3px}
+.drop span{color:var(--muted); font-size:12.5px}
+.note{color:var(--muted); font-size:12.5px; margin:10px 0 0}
+.note code{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--text)}
+.msg{margin-top:11px; padding:9px 11px; border-radius:8px; font-size:13px; border:1px solid var(--line)}
+.msg.ok{border-color:var(--jade); background:var(--jade-soft)}
+.msg.warn{border-color:var(--gold); background:color-mix(in srgb, var(--gold) 14%, transparent)}
+.msg.err{border-color:var(--accent); background:var(--accent-soft)}
+
+/* ----------------------------------------------------------------- tools */
+.tools{display:grid; grid-template-columns:repeat(3,1fr); gap:7px}
+.tool{display:flex; flex-direction:column; align-items:center; gap:5px; padding:9px 4px;
+      border:1px solid var(--line); border-radius:8px; background:var(--bg3); cursor:pointer; font-size:11.5px; color:var(--muted)}
+.tool:hover{border-color:var(--line2)}
+.tool.on{border-color:var(--accent); background:var(--accent-soft); color:var(--text)}
+.tool i{width:17px;height:17px;border-radius:99px;display:block}
+.nudge{display:grid; grid-template-columns:repeat(4,34px); gap:6px}
+
+/* ------------------------------------------------------------------ plan */
+.summary{display:flex; flex-wrap:wrap; gap:8px 20px; align-items:baseline; margin-bottom:12px}
+.summary .big{font-family:"Shippori Mincho",Georgia,serif; font-size:22px}
+.stat{font:500 12.5px/1 "IBM Plex Mono",monospace; color:var(--muted)}
+.stat b{color:var(--text); font-weight:500}
+
+.stepCard{border:1px solid var(--line2); border-left:3px solid var(--accent); border-radius:8px;
+          padding:13px 14px; background:var(--bg3)}
+.stepCard .k{display:flex; align-items:center; gap:9px; margin-bottom:7px}
+.stepCard .num{font:500 12px/1 "IBM Plex Mono",monospace; color:var(--faint)}
+.stepCard .spell{font-family:"Shippori Mincho",Georgia,serif; font-size:17px}
+.stepCard p{margin:0; font-size:14px}
+.stepCard .sub{margin-top:7px; color:var(--muted); font-size:12.5px}
+.kbd{font:500 11px/1 "IBM Plex Mono",monospace; border:1px solid var(--line2); border-radius:4px; padding:2px 5px; color:var(--muted)}
+
+ol.steps{list-style:none; margin:12px 0 0; padding:0; max-height:340px; overflow:auto; border-top:1px solid var(--line)}
+ol.steps li{display:flex; gap:10px; align-items:baseline; padding:7px 4px; border-bottom:1px solid var(--line);
+            cursor:pointer; font-size:13px}
+ol.steps li:hover{background:var(--bg3)}
+ol.steps li.cur{background:var(--accent-soft)}
+ol.steps li .i{font:500 11.5px/1.4 "IBM Plex Mono",monospace; color:var(--faint); min-width:22px; text-align:right; font-variant-numeric:tabular-nums}
+ol.steps li.turn{background:none; cursor:default; color:var(--faint); font-family:"IBM Plex Mono",monospace; font-size:11px;
+                 letter-spacing:.14em; text-transform:uppercase; padding-top:11px}
+ol.steps li.turn:hover{background:none}
+
+details.rules{margin-top:16px; border:1px solid var(--line); border-radius:var(--r); background:var(--bg2)}
+details.rules summary{cursor:pointer; padding:11px 15px; font-family:"Shippori Mincho",Georgia,serif; font-size:15px}
+details.rules .bd{padding:0 15px 14px; font-size:13.5px; color:var(--muted)}
+details.rules .bd p{margin:.5em 0}
+details.rules b{color:var(--text); font-weight:600}
+
+footer{margin-top:26px; color:var(--faint); font-size:12px}
+footer a{color:var(--muted)}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <svg class="yy" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="47" fill="var(--wukang)" stroke="var(--line2)" stroke-width="2"/>
+        <path d="M50 3a47 47 0 0 0 0 94 23.5 23.5 0 0 1 0-47 23.5 23.5 0 0 0 0-47Z" fill="var(--wukin)"/>
+        <circle cx="50" cy="26.5" r="7" fill="var(--wukang)"/>
+        <circle cx="50" cy="73.5" r="7" fill="var(--wukin)"/>
+      </svg>
+      <div>
+        <h1>Jardin Paradoxal</h1>
+        <p>Solveur du combat final — <em>En ce jardin qui nous unit</em></p>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <button class="themeBtn" id="theme" type="button">Thème clair / sombre</button>
+  </header>
+
+  <div class="cols">
+    <!-- =============================================================== board -->
+    <div>
+      <div class="boardWrap">
+        <canvas id="board" width="1160" height="600"></canvas>
+        <div class="boardBar">
+          <span class="chip"><span class="dot n"></span>Wukin <b id="cntN">0</b></span>
+          <span class="chip"><span class="dot b"></span>Wukang <b id="cntB">0</b></span>
+          <span class="chip" id="chipPlayer">Personnage <b>—</b></span>
+          <span style="flex:1"></span>
+          <button class="btn sm ghost" id="bgToggle" type="button" disabled>Fond : schéma</button>
+          <button class="btn sm ghost" id="clearBoard" type="button">Vider</button>
+        </div>
+      </div>
+
+      <div id="planZone" hidden>
+        <div class="panel" style="margin-top:16px">
+          <div class="hd"><span class="eyebrow">Solution</span><h2 id="planTitle">—</h2></div>
+          <div class="bd">
+            <div class="summary" id="planSummary"></div>
+            <div class="stepCard" id="stepCard"></div>
+            <div class="row" style="margin-top:12px">
+              <button class="btn" id="prev" type="button">← Précédent</button>
+              <button class="btn primary" id="next" type="button">Suivant →</button>
+              <span style="flex:1"></span>
+              <button class="btn ghost sm" id="copyPlan" type="button">Copier le plan</button>
+            </div>
+            <ol class="steps" id="stepList"></ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============================================================== panel -->
+    <div>
+      <section class="panel">
+        <div class="hd"><span class="eyebrow">Étape 1</span><h2>Importer la capture</h2></div>
+        <div class="bd">
+          <div class="drop" id="drop" tabindex="0" role="button" aria-label="Importer une capture d'écran">
+            <strong>Dépose ta capture ici</strong>
+            <span>ou clique — <span class="kbd">Ctrl</span>+<span class="kbd">V</span> fonctionne aussi</span>
+          </div>
+          <input type="file" id="file" accept="image/*" hidden>
+          <p class="note">Capture prise <b>pendant la phase de placement</b> ou au début de ton tour, sans fenêtre par-dessus le terrain. Les cases oranges des souffles servent de repère.</p>
+          <div id="detectMsg"></div>
+          <div class="row" id="nudgeRow" style="margin-top:11px" hidden>
+            <span class="stat" style="width:100%">Grille décalée&nbsp;? Recale-la :</span>
+            <div class="nudge">
+              <button class="btn sm ghost" data-nudge="-1,0" type="button" title="vers le haut-gauche">↖</button>
+              <button class="btn sm ghost" data-nudge="0,-1" type="button" title="vers le haut-droite">↗</button>
+              <button class="btn sm ghost" data-nudge="0,1" type="button" title="vers le bas-gauche">↙</button>
+              <button class="btn sm ghost" data-nudge="1,0" type="button" title="vers le bas-droite">↘</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top:16px">
+        <div class="hd"><span class="eyebrow">Étape 2</span><h2>Vérifier / corriger</h2></div>
+        <div class="bd">
+          <div class="tools" id="tools">
+            <button class="tool on" data-tool="noir" type="button"><i style="background:var(--wukin);border:1.5px solid var(--wukin-ring)"></i>Wukin</button>
+            <button class="tool" data-tool="blanc" type="button"><i style="background:var(--wukang);border:1.5px solid var(--wukang-ring)"></i>Wukang</button>
+            <button class="tool" data-tool="player" type="button"><i style="background:var(--accent)"></i>Personnage</button>
+            <button class="tool" data-tool="erase" type="button"><i style="background:var(--bg);border:1.5px solid var(--line2)"></i>Effacer</button>
+            <button class="tool" data-tool="hole" type="button"><i style="background:var(--hole);border:1.5px solid var(--line2)"></i>Trou</button>
+            <button class="tool" data-tool="rock" type="button"><i style="background:var(--rock)"></i>Rocher</button>
+          </div>
+          <p class="note">Clique une case du plateau pour y appliquer l’outil. Les trous laissent passer la ligne de vue, les rochers la bloquent.</p>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top:16px">
+        <div class="hd"><span class="eyebrow">Étape 3</span><h2>Résoudre</h2></div>
+        <div class="bd">
+          <div class="row">
+            <button class="btn primary" id="solve" type="button" style="flex:1">Calculer la solution</button>
+          </div>
+          <div class="row" style="margin-top:9px">
+            <label class="chip" style="cursor:pointer"><input type="checkbox" id="optColor" style="accent-color:var(--accent)"> couleur imposée</label>
+            <select id="colorSel" class="btn sm ghost" style="padding:6px 8px" disabled>
+              <option value="0">tout Wukin (noir)</option>
+              <option value="1">tout Wukang (blanc)</option>
+            </select>
+          </div>
+          <div id="solveMsg"></div>
+        </div>
+      </section>
+
+      <details class="rules">
+        <summary>Rappel des règles du combat</summary>
+        <div class="bd">
+          <p><b>Vibration Paradoxale</b> — 1 PA, −1 PV, 10 lancers/tour. Uniquement <b>en ligne</b>, portée infinie, ligne de vue requise. Un souffle <b>noir</b> est poussé de 1 case, un souffle <b>blanc</b> est attiré de 1 case. La cible change de couleur, <b>et tous les souffles en ligne de la case d’arrivée aussi</b>.</p>
+          <p><b>Réciprocité</b> — 2 PA, −3 PV, 1 lancer/tour, relance 2 tours, portée 2 à 5 sans ligne de vue. Tu échanges de place avec la cible ; la case d’arrivée est <b>ton ancienne case</b>.</p>
+          <p><b>Toi</b> — 50 PV, 10 PA, 1 PM, −1 PV à chaque début de tour. Le but : <b>tous les souffles de la même couleur</b>.</p>
+          <p>Le solveur suppose que la propagation « en ligne » traverse toute la carte sans être arrêtée par les autres souffles, conformément à l’énoncé du sort.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <footer>
+    Règles d’après le guide <a href="https://www.dofuspourlesnoobs.com/en-ce-jardin-qui-nous-unit.html" target="_blank" rel="noopener">Dofus pour les Noobs</a>.
+    DOFUS est un jeu édité par Ankama ; cet outil n’est pas affilié.
+  </footer>
+</div>
+
+<script src="solver.js"></script>
+<script src="detect.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
